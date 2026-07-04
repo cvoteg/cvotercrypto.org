@@ -1,0 +1,204 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+}
+
+:root {
+  --background: #050505;
+  --foreground: #F0EFEA;
+  --primary: #F0EFEA;
+  --primary-foreground: #050505;
+  --muted: #111111;
+  --muted-foreground: #7A7A7A;
+  --accent: #4A6FA5;
+  --accent-gold: #C9A84C;
+  --accent-silver: #9EAAB8;
+  --border: rgba(240, 239, 234, 0.08);
+  --input: rgba(240, 239, 234, 0.08);
+  --ring: #4A6FA5;
+  --radius: 2px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  ::selection {
+    background: rgba(74, 111, 165, 0.3);
+    color: #F0EFEA;
+  }
+}
+
+/* ── planet motion system ──────────────────────────────────────── */
+@keyframes planetFlight {
+  0% {
+    opacity: 0;
+    transform: translate3d(calc(var(--sx) + var(--px, 0px)), calc(var(--sy) + var(--py, 0px)), 0) scale(0.9) rotate(0deg);
+  }
+  12% { opacity: var(--opacity); }
+  50% {
+    opacity: var(--opacity);
+    transform: translate3d(calc(var(--mx) + var(--px, 0px)), calc(var(--my) + var(--py, 0px)), 0) scale(1) rotate(calc(var(--rot) * 0.45));
+  }
+  88% { opacity: var(--opacity); }
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(var(--ex) + var(--px, 0px)), calc(var(--ey) + var(--py, 0px)), 0) scale(1.04) rotate(var(--rot));
+  }
+}
+
+@keyframes planetSurfaceDrift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 180% 50%; }
+}
+
+.planet-flight {
+  width: var(--size);
+  height: var(--size);
+  opacity: 0;
+  animation: planetFlight var(--dur) cubic-bezier(0.39, 0, 0.19, 1) var(--delay) infinite;
+  filter: blur(var(--blur)) drop-shadow(0 32px 70px rgba(0, 0, 0, 0.62));
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+}
+
+.planet-render {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  overflow: hidden;
+  background-size: 220% 100%;
+  animation: planetSurfaceDrift 140s linear infinite;
+  box-shadow:
+    inset -42px -30px 60px rgba(0, 0, 0, 0.62),
+    inset 18px 14px 28px rgba(255, 255, 255, 0.12),
+    0 0 32px rgba(158, 170, 184, 0.08);
+}
+
+.planet-render::before {
+  position: absolute;
+  content: "";
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,0.36), transparent 12%),
+    radial-gradient(circle at 72% 76%, rgba(0,0,0,0.42), transparent 42%);
+  mix-blend-mode: screen;
+  opacity: 0.58;
+}
+
+.planet-render::after {
+  position: absolute;
+  content: "";
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(circle at 70% 65%, transparent 36%, rgba(0,0,0,0.52) 76%);
+}
+
+.planet-rocky {
+  background-image:
+    radial-gradient(circle at 34% 38%, rgba(255,255,255,0.10) 0 5%, transparent 6%),
+    radial-gradient(circle at 58% 28%, rgba(41,30,24,0.35) 0 8%, transparent 9%),
+    radial-gradient(circle at 48% 62%, rgba(92,62,44,0.42) 0 10%, transparent 11%),
+    linear-gradient(105deg, #8b5e44 0%, #c09364 28%, #68513f 52%, #342c29 78%, #9f7753 100%);
+}
+
+.planet-icy {
+  background-image:
+    radial-gradient(circle at 30% 42%, rgba(255,255,255,0.22) 0 6%, transparent 7%),
+    linear-gradient(130deg, rgba(255,255,255,0.24) 0 8%, transparent 9% 18%, rgba(255,255,255,0.12) 19% 26%, transparent 27%),
+    linear-gradient(105deg, #c9d8e6 0%, #8fb1c9 34%, #e6eef2 52%, #577b99 78%, #d7e2ea 100%);
+}
+
+.planet-gas {
+  background-image:
+    linear-gradient(180deg, transparent 0 13%, rgba(255,255,255,0.18) 14% 18%, transparent 19% 28%, rgba(74,111,165,0.34) 29% 36%, transparent 37% 49%, rgba(201,168,76,0.26) 50% 56%, transparent 57% 100%),
+    linear-gradient(105deg, #c7774b 0%, #f0c27b 24%, #9f6d9e 42%, #4a6fa5 62%, #e8b66c 82%, #7c4d79 100%);
+}
+
+.planet-ringed {
+  overflow: visible;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,0.10) 0 10%, transparent 11% 24%, rgba(201,168,76,0.18) 25% 34%, transparent 35%),
+    linear-gradient(105deg, #bda271 0%, #e7d3a0 34%, #7b694f 58%, #3f3a35 80%, #d8be7a 100%);
+}
+
+.planet-ringed::before {
+  position: absolute;
+  content: "";
+  left: -35%;
+  right: -35%;
+  top: 42%;
+  height: 17%;
+  border-radius: 50%;
+  border: calc(var(--size) * 0.035) solid rgba(213, 199, 157, 0.44);
+  border-left-color: rgba(158, 170, 184, 0.16);
+  border-right-color: rgba(240, 239, 234, 0.30);
+  transform: rotate(-12deg);
+  box-shadow: 0 0 18px rgba(201,168,76,0.08);
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
+.planet-ringed::after {
+  position: absolute;
+  content: "";
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 68% 62%, transparent 34%, rgba(0,0,0,0.58) 78%);
+}
+
+.planet-moon {
+  background-image:
+    radial-gradient(circle at 32% 35%, rgba(0,0,0,0.20) 0 8%, transparent 9%),
+    radial-gradient(circle at 60% 55%, rgba(0,0,0,0.18) 0 6%, transparent 7%),
+    radial-gradient(circle at 42% 68%, rgba(255,255,255,0.10) 0 5%, transparent 6%),
+    linear-gradient(105deg, #a7a9aa 0%, #d2d4d2 32%, #787b80 64%, #c5c8c8 100%);
+}
+
+.planet-distant {
+  background-image:
+    linear-gradient(135deg, #324866 0%, #9eaab8 42%, #223047 72%, #6e7b88 100%);
+  box-shadow:
+    inset -24px -18px 42px rgba(0,0,0,0.66),
+    inset 10px 8px 18px rgba(255,255,255,0.10),
+    0 0 28px rgba(74,111,165,0.10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-floatA, .m-floatB, .m-floatC, .m-rotate, .m-rotrev,
+  .m-orbit, .m-bounce, .m-spin, .planet-flight, .planet-render { animation: none !important; }
+  html { scroll-behavior: auto; }
+}
